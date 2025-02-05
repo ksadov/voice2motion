@@ -1,0 +1,13 @@
+pretrained_models
+render_output
+**/__pycache__/**
+scrap.txt
+notes.txt
+runs
+data
+!src/data
+onnx_models/
+assets/*.pt
+assets/avspeech_train.csv
+assets/avspeech_test.csv
+assets/face_landmarker.task

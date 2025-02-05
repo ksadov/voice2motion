@@ -1,0 +1,75 @@
+{
+  "log_dir": "runs/fp16_0.2_constant",
+  "log_tb_every": 500,
+  "data_config": {
+    "train": {
+      "data_dir": "/mnt/storage_4tb/train_preprocessed/",
+      "random_start_idx": true,
+      "dataloader": {
+        "batch_size": 64,
+        "shuffle": true,
+        "num_workers": 4,
+        "pin_memory": true
+      }
+    },
+    "val": {
+      "data_dir": "data/TalkingHead-1KH/val/cropped_clips_info",
+      "dataloader": {
+        "shuffle": false,
+        "num_workers": 0
+      }
+    },
+    "shapekey_smoothing": 0,
+    "head_angle_smoothing": 0
+  },
+  "model_config": {
+    "type": "Simple",
+    "decoder_dimensions": {
+      "d_model": 256,
+      "nhead": 4,
+      "dim_feedforward": 1024,
+      "dropout": 0.1,
+      "activation": "gelu",
+      "num_layers": 4,
+      "n_ctx": 90
+    },
+    "hubert_params": {
+      "model_name": "facebook/hubert-base-ls960",
+      "return_attention_mask": false,
+      "feature_dim": 768
+    }
+  },
+  "device": "cuda",
+  "lr": 0.0001,
+  "warmup_steps": 1000,
+  "lr_patience": 500,
+  "max_epochs": 100,
+  "val_per_epoch": 1,
+  "val_steps": null,
+  "render_params": {
+    "shape_keys_path": "assets/reference_mesh/shape_keys",
+    "min_audio_samples_per_step": 48000,
+    "max_audio_samples_per_step": 48000,
+    "pipeline_crossfade": 5,
+    "max_audio_duration": 6.0
+  },
+  "checkpoint_every": 5000,
+  "start_checkpoint": null,
+  "weight_decay": 0.0,
+  "max_grad_norm": 1.0,
+  "mask_audio_padding": false,
+  "teacher_forcing": {
+    "start_step": 0,
+    "end_step": 0,
+    "start_prob": 0.2,
+    "end_prob": 0.2
+  },
+  "zero_padding_prob": 0.5,
+  "loss_metric": "l1_smooth",
+  "save_ema": true,
+  "fp16": true,
+  "val_params": {
+    "num_video_examples": 3,
+    "num_pipeline_examples": 2
+  }
+}
