@@ -1,7 +1,9 @@
 import os
-import requests
 from pathlib import Path
+
+import requests
 import torch
+
 from src.model.inference import init_pipeline, render_inference
 from src.utils.rendering import Scene
 
@@ -21,8 +23,8 @@ def run_inference(checkpoint_path):
         pipeline,
         scene,
         Path("assets/example.wav"),
-        48000,
-        48000,
+        1000,
+        1000,
         Path("render_output/test_setup.mp4"),
         mouth_exaggeration=3.0,
         brow_exaggeration=1.0,

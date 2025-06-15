@@ -1,30 +1,28 @@
+import time
+from dataclasses import dataclass
+from pathlib import Path
+from typing import Optional, Union
+
+import numpy as np
+import onnxruntime as ort
 import torch
 import torchaudio
 import torchaudio.transforms as T
-import numpy as np
-from typing import Optional
-from pathlib import Path
 
-import time
-
-from src.utils.audio import load_audio_from_video, AudioStream
-from src.utils.constants import HEAD_LANDMARK_DIM
 from src.model.simple import load_from_checkpoint
-from src.utils.landmarks import (
-    unscale_and_uncenter_head_angles,
-    clean_up_blendshapes,
-    exaggerate_head_wiggle,
-)
-from src.utils.rendering import Scene
-from src.utils.video import combine_videos_side_by_side, add_audio_to_video
+from src.utils.audio import AudioStream, load_audio_from_video
 from src.utils.constants import (
+    HEAD_LANDMARK_DIM,
     N_AUDIO_SAMPLES_PER_VIDEO_FRAME,
     SAMPLE_RATE,
 )
-
-import onnxruntime as ort
-from dataclasses import dataclass
-from typing import Optional, Union
+from src.utils.landmarks import (
+    clean_up_blendshapes,
+    exaggerate_head_wiggle,
+    unscale_and_uncenter_head_angles,
+)
+from src.utils.rendering import Scene
+from src.utils.video import add_audio_to_video, combine_videos_side_by_side
 
 
 class InferencePipeline:
@@ -480,6 +478,7 @@ def render_inference(
     eye_contact_fix: float = 0.0,
     exaggerate_above: float = 0.0,
     symmetrize_eyes: bool = False,
+    return_model_output: bool = False,
 ):
     """
     Run the model on an input audio or video file under simulated streaming conditions and save the output video.
@@ -499,7 +498,7 @@ def render_inference(
         eye_contact_fix: Offset for eyeLook
         exaggerate_above: Minimum value to exaggerate
         symmetrize_eyes: Average eye blink between left and right
-
+        return_model_output: Return model output
     Requires:
         - If input_path is a video, the video extension must be .mp4
     """
@@ -527,4 +526,11 @@ def render_inference(
         combine_videos_side_by_side(input_path, temp_output_path, output_file)
     else:
         add_audio_to_video(temp_output_path, input_path, output_file)
-    return mean_step_time, mean_rtf, time_to_first_sound
+    if return_model_output:
+        model_output = {
+            "blendshapes": blendshapes,
+            "head_angles": head_angles,
+        }
+        return model_output, mean_step_time, mean_rtf, time_to_first_sound
+    else:
+        return mean_step_time, mean_rtf, time_to_first_sound
