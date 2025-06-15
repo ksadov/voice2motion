@@ -46,6 +46,9 @@ Edit the contents of `configs/example.json` to fit your use case and run `python
 # Inference
 `python -m src.scripts.infer --checkpoint_path your/checkpoint/path --file_path your/audio.wav` will simulate running Pytorch inference on streamed audio. To use ONNX for inference, use `python -m src.scripts.infer --checkpoint_path your/checkpoint/path --file_path your/audio.wav`.
 
+# Evaluation
+`src/script/evaluate_metrics.py` will run inference with a given model on a specified subset of audio from videos in a given directory and calculate statistics relative to MediaPipe outputs.
+
 # Known issues
 - Segmentation faults will randomly occur during training and halt the run. I think it has something to do with saving videos, and the probability of a failure decreases if you keep `num_video_examples` in the training config low and perform fewer vals per epoch.
 
